@@ -2,9 +2,9 @@
   "name": "askit",
   "version": "0.0.0",
   "scripts": {
-    "dev": "dotenv -e .env tsx watch ./src/index.ts",
+    "dev": "dotenv -e .env tsx watch ./src/askit.ts",
     "build": "tsc",
-    "start": "dotenv -e .env pm2 start ./dist/index.js --name askit",
+    "start": "dotenv -e .env pm2 start ./dist/askit.js",
     "stop": "pm2 stop askit"
   },
   "dependencies": {
