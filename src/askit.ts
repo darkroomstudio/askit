@@ -1,5 +1,5 @@
-import OpenAI from 'openai'
 import { App } from '@slack/bolt'
+import { getGPTResponse, handleThreadHistory } from './openai'
 
 const slack = new App({
   token: process.env.SLACK_BOT_TOKEN,
@@ -7,18 +7,26 @@ const slack = new App({
   socketMode: true,
 })
 
-slack.event('app_mention', async ({ event, say }) => {
-  const gptResponse = await getGPTResponse(event.text)
-  await say(`${gptResponse.choices[0].message.content}`)
-})
+slack.event(
+  'app_mention',
+  async ({ event: { channel, ts, thread_ts }, client }) => {
+    const threadHistory = await client.conversations.replies({
+      channel,
+      ts: thread_ts ?? ts,
+      inclusive: true,
+    })
 
-const openai = new OpenAI() // process.env.OPENAI_API_KEY
-async function getGPTResponse(text: string) {
-  return await openai.chat.completions.create({
-    model: 'gpt-4',
-    messages: [{ role: 'user', content: text }],
-  })
-}
+    const prompt = await handleThreadHistory(threadHistory)
+    console.log(prompt)
+    const gptResponse = await getGPTResponse(prompt)
+
+    await client.chat.postMessage({
+      channel,
+      thread_ts: ts,
+      text: `${gptResponse.choices[0].message.content}`,
+    })
+  }
+)
 
 slack.start()
 console.log('⚡️ Bolt app is running!')
