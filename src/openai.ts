@@ -1,5 +1,6 @@
 import OpenAI from 'openai'
 import type { ChatCompletionMessageParam } from 'openai/resources'
+import type { ConversationsRepliesResponse } from '@slack/web-api'
 
 const openai = new OpenAI() // process.env.OPENAI_API_KEY
 
@@ -10,21 +11,21 @@ export async function getGPTResponse(prompt: ChatCompletionMessageParam[]) {
   })
 }
 
-export async function handleThreadHistory({ messages }: any) {
-  const botID = messages[0].reply_users[0]
-  return messages
-    .map((message: any) => {
-      const isBot = !!message.bot_id && !message.client_msg_id
-      const isNotMentioned = !isBot && !message.text.includes(`<@${botID}>`)
+export async function generatePromptFromThread({
+  messages,
+}: ConversationsRepliesResponse) {
+  if (!messages) throw new Error('No messages found in thread')
+  const botID = messages[0].reply_users?.[0]
 
-      if (isNotMentioned) return null
+  return messages.map((message: any) => {
+    const isBot = !!message.bot_id && !message.client_msg_id
+    const isNotMentioned = !isBot && !message.text.includes(`<@${botID}>`)
 
-      return {
-        role: isBot ? 'assistant' : 'user',
-        content: isBot
-          ? message.text
-          : message.text.replace(`<@${botID}> `, ''),
-      }
-    })
-    .filter(Boolean)
+    if (isNotMentioned) throw new Error('User not mentioned')
+
+    return {
+      role: isBot ? 'assistant' : 'user',
+      content: isBot ? message.text : message.text.replace(`<@${botID}> `, ''),
+    }
+  })
 }
