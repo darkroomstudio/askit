@@ -19,10 +19,7 @@ slack.event(
       })
 
       const prompt = await generatePromptFromThread(thread)
-      console.log(thread.messages)
-      const gptResponse = await getGPTResponse(
-        prompt as ChatCompletionMessageParam[]
-      )
+      const gptResponse = await getGPTResponse(prompt)
 
       await client.chat.postMessage({
         channel,

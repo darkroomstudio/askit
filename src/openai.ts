@@ -17,15 +17,20 @@ export async function generatePromptFromThread({
   if (!messages) throw new Error('No messages found in thread')
   const botID = messages[0].reply_users?.[0]
 
-  return messages.map((message: any) => {
-    const isBot = !!message.bot_id && !message.client_msg_id
-    const isNotMentioned = !isBot && !message.text.includes(`<@${botID}>`)
+  const result = messages
+    .map((message: any) => {
+      const isBot = !!message.bot_id && !message.client_msg_id
+      const isNotMentioned = !isBot && !message.text.startsWith(`<@`)
+      if (isNotMentioned) return null
 
-    if (isNotMentioned) throw new Error('User not mentioned')
+      return {
+        role: isBot ? 'assistant' : 'user',
+        content: isBot
+          ? message.text
+          : message.text.replace(`<@${botID}> `, ''),
+      }
+    })
+    .filter(Boolean)
 
-    return {
-      role: isBot ? 'assistant' : 'user',
-      content: isBot ? message.text : message.text.replace(`<@${botID}> `, ''),
-    }
-  })
+  return result as ChatCompletionMessageParam[]
 }
