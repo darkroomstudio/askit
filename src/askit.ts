@@ -19,6 +19,7 @@ slack.event(
       })
 
       const prompt = await generatePromptFromThread(thread)
+      console.log(thread.messages)
       const gptResponse = await getGPTResponse(
         prompt as ChatCompletionMessageParam[]
       )
@@ -28,7 +29,16 @@ slack.event(
         thread_ts: ts,
         text: `${gptResponse.choices[0].message.content}`,
       })
-    } catch (error) {}
+    } catch (error) {
+      if (error instanceof Error) {
+        await client.chat.postMessage({
+          channel,
+          thread_ts: ts,
+          text: `<@${process.env.ADMIN_USER_ID}> Error: ${error.message}`,
+        })
+      }
+    }
   }
 )
+
 slack.start()
