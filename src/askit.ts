@@ -1,6 +1,5 @@
 import { App as Slack } from '@slack/bolt'
 import { getGPTResponse, generatePromptFromThread } from './openai'
-import type { ChatCompletionMessageParam } from 'openai/resources'
 
 const slack = new Slack({
   token: process.env.SLACK_BOT_TOKEN,
