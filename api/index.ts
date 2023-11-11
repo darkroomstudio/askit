@@ -20,3 +20,5 @@ async function getGPTResponse(text: string) {
     messages: [{ role: 'user', content: text }],
   })
 }
+
+export default slack
