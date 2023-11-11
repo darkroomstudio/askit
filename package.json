@@ -1,13 +1,16 @@
 {
   "name": "askit",
   "version": "0.0.0",
-  "type": "module",
   "scripts": {
-    "dev": "dotenv -e .env tsx watch ./src/index.ts"
+    "dev": "dotenv -e .env tsx watch ./src/index.ts",
+    "build": "tsc",
+    "start": "dotenv -e .env pm2 start ./dist/index.js --name askit",
+    "stop": "pm2 stop askit"
   },
   "dependencies": {
     "@slack/bolt": "^3.14.0",
-    "openai": "^4.17.4"
+    "openai": "^4.17.4",
+    "pm2": "^5.3.0"
   },
   "devDependencies": {
     "@types/node": "^20.9.0",
