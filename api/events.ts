@@ -15,7 +15,8 @@ export default async function events(
   const requestType = request.body.type
 
   if (requestType === 'url_verification') {
-    return response.status(200).json({ challenge: request.body.challenge })
+    console.log('url_verification', request.body.challenge)
+    response.status(200).json({ challenge: request.body.challenge })
   }
 
   if (requestType === 'event_callback') {
