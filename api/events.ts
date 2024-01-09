@@ -41,6 +41,9 @@ export default async function events(
       }
     }
   } catch (error) {
-    throw new Error(error)
+    if (error instanceof Error) {
+      console.error(error.message)
+      response.status(500).send(error.message)
+    }
   }
 }
