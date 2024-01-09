@@ -17,7 +17,7 @@ export default async function events(
 
     if (requestType === 'url_verification') {
       console.log('url_verification', request.body.challenge)
-      response.status(200).json({ challenge: request.body.challenge })
+      response.status(200).send({ challenge: request.body.challenge })
     }
 
     if (requestType === 'event_callback') {
@@ -41,6 +41,6 @@ export default async function events(
       }
     }
   } catch (error) {
-    console.error(error)
+    throw new Error(error)
   }
 }
