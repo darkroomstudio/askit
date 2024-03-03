@@ -26,9 +26,24 @@ export async function sendGPTResponse({ channel, ts, thread_ts }: SlackEvent) {
       text: `${gptResponse.choices[0].message.content}`,
     })
   } catch (error) {
-    if (error instanceof Error) {
-      // See Vercel Runtime Logs for errors: https://vercel.com/docs/observability/runtime-logs
-      throw new Error(`Error sending GPT response: ${error.message}`)
-    }
+    // See Vercel Runtime Logs for errors: https://vercel.com/docs/observability/runtime-logs
+    console.error(error)
+    throw error
+  }
+}
+
+export async function sendReminder(message: string) {
+  if (!process.env.SLACK_TARGET_CHANNEL) {
+    throw new Error('SLACK_TARGET_CHANNEL is not defined')
+  }
+
+  try {
+    await slack.chat.postMessage({
+      channel: process.env.SLACK_TARGET_CHANNEL,
+      text: message,
+    })
+  } catch (error) {
+    console.error(error)
+    throw error
   }
 }

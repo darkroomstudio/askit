@@ -1,4 +1,14 @@
 {
+  "crons": [
+    {
+      "path": "/api/remind/group-up",
+      "schedule": "30 08 * * 0"
+    },
+    {
+      "path": "/api/remind/stand-up",
+      "schedule": "30 08 * * 3"
+    }
+  ],
   "redirects": [
     {
       "source": "/",
