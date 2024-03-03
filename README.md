@@ -1,4 +1,4 @@
-# Vercel AI Slack Bot
+# DKRM Slackbot
 
 ![Screenshot of usage of this project](https://github.com/devjiwonchoi/vercel-ai-slackbot/assets/120007119/eb71cacc-573c-43e5-9cb3-089850957dd6)
 
@@ -41,6 +41,10 @@ Go to [Slack API Apps Page](https://api.slack.com/apps):
   - App Credentials --> Coppy **Signing Secret**
   - Add the secret to Vercel's environment variables as `SLACK_SIGNING_SECRET`
 
+#### `CRON_SECRET`
+
+- [Secret key to secure your cron job invocations](https://vercel.com/docs/cron-jobs/manage-cron-jobs#securing-cron-jobs)
+
 ### Enable Slack Events
 
 After successfully deploying the app, go to [Slack API Apps Page](https://api.slack.com/apps) and select your app:
@@ -51,3 +55,22 @@ After successfully deploying the app, go to [Slack API Apps Page](https://api.sl
   - Make sure the URL is verified, otherwise check out [Vercel Logs](https://vercel.com/docs/observability/runtime-logs) for troubleshooting.
   - If verified, make sure to click **Save Changes**.
 - After these changes, Slack may require reinstalling of the app.
+
+### Cron Job Schedule (UTC)
+
+You can modify the cron job schedule in [`vercel.json`](./vercel.json) through the [cron expressions](https://vercel.com/docs/cron-jobs#cron-expressions):
+
+```json
+{
+  "crons": [
+    {
+      "path": "/api/remind/group-up",
+      "schedule": "30 08 * * 0"
+    },
+  ]
+}
+```
+
+> This cron job is scheduled to run every Sunday at 08:30 (UTC).
+
+We recommend you to use [crontab guru](https://crontab.guru) to generate your cron expressions.
