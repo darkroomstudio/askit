@@ -1,22 +1,37 @@
-// This code snippet is based on https://github.com/devjiwonchoi/vercel-slackbot/blob/main/api/_validate.js
-// To know more about validating requests from Slack, check out https://api.slack.com/authentication/verifying-requests-from-slack
 import crypto from 'crypto'
+
 const signingSecret = process.env.SLACK_SIGNING_SECRET!
 
-export function isValidSlackRequest(event: any) {
-  const { body, headers } = event
-  const requestBody = JSON.stringify(body)
+// See https://api.slack.com/authentication/verifying-requests-from-slack
+export async function isValidSlackRequest({
+  request,
+  rawBody,
+}: {
+  request: Request
+  rawBody: string
+}) {
+  const timestamp = request.headers.get('X-Slack-Request-Timestamp')
+  const slackSignature = request.headers.get('X-Slack-Signature')
 
-  const timestamp = headers['x-slack-request-timestamp']
-  const slackSignature = headers['x-slack-signature']
-  const baseString = 'v0:' + timestamp + ':' + requestBody
+  if (!timestamp || !slackSignature) {
+    return false
+  }
 
+  // Prevent replay attacks on the order of 5 minutes
+  if (Math.abs(Date.now() / 1000 - parseInt(timestamp)) > 60 * 5) {
+    return false
+  }
+
+  const base = `v0:${timestamp}:${rawBody}`
   const hmac = crypto
     .createHmac('sha256', signingSecret)
-    .update(baseString)
+    .update(base)
     .digest('hex')
-  const computedSlackSignature = 'v0=' + hmac
-  const isValidRequest = computedSlackSignature === slackSignature
+  const computedSignature = `v0=${hmac}`
 
-  return isValidRequest
+  // Prevent timing attacks
+  return crypto.timingSafeEqual(
+    Buffer.from(computedSignature),
+    Buffer.from(slackSignature)
+  )
 }
