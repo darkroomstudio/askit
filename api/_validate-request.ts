@@ -17,8 +17,8 @@ export async function isValidSlackRequest({
     return false
   }
 
-  // Prevent replay attacks on the order of 5 minutes
-  if (Math.abs(Date.now() / 1000 - parseInt(timestamp)) > 60 * 5) {
+  // Prevent replay attacks on the order of 1 minutes
+  if (Math.abs(Date.now() / 1000 - parseInt(timestamp)) > 60 * 1) {
     return false
   }
 
