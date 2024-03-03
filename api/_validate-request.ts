@@ -29,9 +29,5 @@ export async function isValidSlackRequest({
     .digest('hex')
   const computedSignature = `v0=${hmac}`
 
-  // Prevent timing attacks
-  return crypto.timingSafeEqual(
-    Buffer.from(computedSignature),
-    Buffer.from(slackSignature)
-  )
+  computedSignature === slackSignature
 }
