@@ -14,6 +14,7 @@ export async function isValidSlackRequest({
   const slackSignature = request.headers.get('X-Slack-Signature')
   const retryNum = request.headers.get('X-Slack-Retry-Num')
 
+  // See https://api.slack.com/apis/connections/events-api#retries
   if (retryNum) {
     // If the request is a retry, we will not validate the request.
     const retryReason = request.headers.get('X-Slack-Retry-Reason')
