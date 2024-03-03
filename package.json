@@ -1,0 +1,14 @@
+{
+  "name": "vercel-ai-slackbot",
+  "private": true,
+  "version": "0.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "@slack/web-api": "^7.0.2",
+    "openai": "^4.28.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "typescript": "^5.3.3"
+  }
+}
