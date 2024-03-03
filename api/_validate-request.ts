@@ -12,6 +12,14 @@ export async function isValidSlackRequest({
 }) {
   const timestamp = request.headers.get('X-Slack-Request-Timestamp')
   const slackSignature = request.headers.get('X-Slack-Signature')
+  const retryNum = request.headers.get('X-Slack-Retry-Num')
+
+  if (retryNum) {
+    // If the request is a retry, we will not validate the request.
+    const retryReason = request.headers.get('X-Slack-Retry-Reason')
+    console.log(`Received a retry request due to "${retryReason}".`)
+    return false
+  }
 
   if (!timestamp || !slackSignature) {
     return false
