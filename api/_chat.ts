@@ -1,5 +1,5 @@
 import { WebClient } from '@slack/web-api'
-import { getGPTResponse, generatePromptFromThread } from './_openai'
+import { getGPTStream, generatePromptFromThread } from './_openai'
 
 const slack = new WebClient(process.env.SLACK_BOT_TOKEN)
 
@@ -18,12 +18,47 @@ export async function sendGPTResponse({ channel, ts, thread_ts }: SlackEvent) {
     })
 
     const prompts = await generatePromptFromThread(thread)
-    const gptResponse = await getGPTResponse(prompts)
+    const stream = await getGPTStream(prompts)
 
-    await slack.chat.postMessage({
+    let isFirstChunk = true
+    let initialTs = ''
+    let messageText = ''
+    let chunkCount = 0
+
+    for await (const chunk of stream) {
+      messageText += chunk.choices[0]?.delta?.content
+
+      if (isFirstChunk && messageText) {
+        const post = await slack.chat.postMessage({
+          channel,
+          text: messageText,
+          thread_ts: ts,
+        })
+        isFirstChunk = false
+        initialTs = post.ts ?? ''
+        continue
+      }
+
+      // Update the message every 10 chunks
+      if (initialTs && messageText && chunkCount % 10 === 9) {
+        await slack.chat.update({
+          channel,
+          text: messageText,
+          ts: initialTs,
+          as_user: true,
+        })
+      }
+
+      chunkCount++
+    }
+
+    // Update the message with the final chunk
+    const finalChunk = await stream.finalChatCompletion()
+    await slack.chat.update({
       channel,
-      thread_ts: ts,
-      text: `${gptResponse.choices[0].message.content}`,
+      text: finalChunk.choices[0]?.message?.content ?? messageText,
+      ts: initialTs,
+      as_user: true,
     })
   } catch (error) {
     // See Vercel Runtime Logs for errors: https://vercel.com/docs/observability/runtime-logs

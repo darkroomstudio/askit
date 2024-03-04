@@ -74,3 +74,18 @@ You can modify the cron job schedule in [`vercel.json`](./vercel.json) through t
 > This cron job is scheduled to run every Sunday at 08:30 (UTC).
 
 We recommend you to use [crontab guru](https://crontab.guru) to generate your cron expressions.
+
+## Local Development
+
+Use [Vercel CLI](https://vercel.com/docs/cli) and [localtunnel](https://github.com/localtunnel/localtunnel) to test out this project locally:
+
+```sh
+pnpm install
+pnpm vercel dev --listen 3000 --yes
+```
+
+```sh
+npx localtunnel --port 3000
+```
+
+Make sure to modify the [subscription URL](./README.md/#enable-slack-events) to the `localtunnel` URL.

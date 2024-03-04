@@ -1,13 +1,14 @@
+import OpenAI from 'openai'
 import type { ChatCompletionMessageParam } from 'openai/resources'
 import type { ConversationsRepliesResponse } from '@slack/web-api'
-import OpenAI from 'openai'
+import type { MessageElement } from '@slack/web-api/dist/types/response/ConversationsHistoryResponse'
 
 // process.env.OPENAI_API_KEY by default
 const openai = new OpenAI()
 
-export async function getGPTResponse(messages: ChatCompletionMessageParam[]) {
-  return await openai.chat.completions.create({
-    model: 'gpt-4',
+export async function getGPTStream(messages: ChatCompletionMessageParam[]) {
+  return await openai.beta.chat.completions.stream({
+    model: 'gpt-3.5-turbo',
     messages,
   })
 }
@@ -19,16 +20,16 @@ export async function generatePromptFromThread({
   const botID = messages[0].reply_users?.[0]
 
   const result = messages
-    .map((message: any) => {
+    .map((message: MessageElement) => {
       const isBot = !!message.bot_id && !message.client_msg_id
-      const isNotMentioned = !isBot && !message.text.startsWith(`<@`)
+      const isNotMentioned = !isBot && !message.text?.startsWith(`<@`)
       if (isNotMentioned) return null
 
       return {
         role: isBot ? 'assistant' : 'user',
         content: isBot
           ? message.text
-          : message.text.replace(`<@${botID}> `, ''),
+          : message.text?.replace(`<@${botID}> `, ''),
       }
     })
     .filter(Boolean)
