@@ -5,6 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "@slack/web-api": "^7.0.2",
+    "@vercel/postgres": "^0.7.2",
     "openai": "^4.28.0"
   },
   "devDependencies": {
