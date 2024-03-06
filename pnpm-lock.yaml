@@ -12,8 +12,8 @@ dependencies:
     specifier: ^4.28.0
     version: 4.28.0
   vercel-cron-logger:
-    specifier: ^0.0.1
-    version: 0.0.1
+    specifier: ^0.0.2
+    version: 0.0.2
 
 devDependencies:
   '@types/node':
@@ -395,8 +395,8 @@ packages:
       node-gyp-build: 4.8.0
     dev: false
 
-  /vercel-cron-logger@0.0.1:
-    resolution: {integrity: sha512-t+WZP7zyoVsbPRLurRa3rqZ0r9bJTIGTHqi+oN1H5ABSDns8RbXNNPW7RseGwO9nLNTuJlFCWSWfy+zv0ZsdLw==}
+  /vercel-cron-logger@0.0.2:
+    resolution: {integrity: sha512-NFlrs6g0vv6BUjoRrgx51l7q2vxvpX3CogO8UsNjT0GnLTBsZ/YWJ7fA5wawvUaxfJedUUDPUalC078/QtMPxw==}
     dependencies:
       '@vercel/postgres': 0.7.2
     dev: false
