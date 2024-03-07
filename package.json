@@ -3,6 +3,11 @@
   "private": true,
   "version": "0.0.0",
   "license": "MIT",
+  "scripts": {
+    "dev:vc": "vc dev --listen 3000 --yes",
+    "dev:lt": "lt --port 3000",
+    "dev": "concurrently \"pnpm dev:vc\" \"pnpm dev:lt\""
+  },
   "dependencies": {
     "@slack/web-api": "^7.0.2",
     "openai": "^4.28.0",
@@ -10,6 +15,9 @@
   },
   "devDependencies": {
     "@types/node": "^20.11.17",
-    "typescript": "^5.3.3"
+    "concurrently": "^8.2.2",
+    "localtunnel": "^2.0.2",
+    "typescript": "^5.3.3",
+    "vercel": "^33.5.3"
   }
 }

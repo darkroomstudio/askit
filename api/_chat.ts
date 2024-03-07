@@ -1,7 +1,5 @@
-import { WebClient } from '@slack/web-api'
 import { getGPTStream, generatePromptFromThread } from './_openai'
-
-const slack = new WebClient(process.env.SLACK_BOT_TOKEN)
+import { slack } from './_slack'
 
 type SlackEvent = {
   channel: string
